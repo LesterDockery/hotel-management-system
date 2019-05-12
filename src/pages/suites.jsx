@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 //import { BrowserRouter, Route } from 'react-router-dom';
-import suite1 from "../img/Gallery/suite1.jpg";
-import suite2 from "../img/Gallery/suite2.jpg";
-import suite3 from "../img/Gallery/suite3.jpg";
-import suite4 from "../img/Gallery/suite4.jpg";
-import suite5 from "../img/Gallery/suite5.jpg";
-import suite6 from "../img/Gallery/suite6.jpg";
-import suite7 from "../img/Gallery/suite7.jpg";
-import suite8 from "../img/Gallery/suite8.jpg";
-import suite9 from "../img/Gallery/suite9.jpg";
+import suite1 from "../img/suites/suite1.jpg";
+import suite2 from "../img/suites/suite2.jpg";
+import suite3 from "../img/suites/suite3.jpg";
+import suite4 from "../img/suites/suite4.jpg";
+import suite5 from "../img/suites/suite5.jpg";
+import suite6 from "../img/suites/suite6.jpg";
+import suite7 from "../img/suites/suite7.jpg";
+import suite8 from "../img/suites/suite8.jpg";
+import suite9 from "../img/suites/suite9.jpg";
 
 class Suite extends Component {
 	render() {

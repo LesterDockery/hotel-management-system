@@ -1,10 +1,4 @@
 /*!
- * Bootstrap v3.3.7 (http://getbootstrap.com)
- * Copyright 2011-2018 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
-
-/*!
  * Generated using the Bootstrap Customizer (<none>)
  * Config saved to config.json and <none>
  */
@@ -21,6 +15,7 @@ html {
   }
   body {
     margin: 0;
+    background-color: #5f9ea0;
   }
   article,
   aside,
@@ -197,7 +192,7 @@ html {
   th {
     padding: 0;
   }
-  /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
+
   @media print {
     *,
     *:before,
@@ -283,13 +278,14 @@ html {
   html {
     font-size: 10px;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    background-color: #5f9ea0;
   }
   body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.42857143;
     color: #333333;
-    background-color: #ffffff;
+    background-color: #5f9ea0;
   }
   input,
   button,

@@ -1,12 +1,13 @@
 const app = require('express')()
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 // Create connection
 const db = mysql.createConnection({
     host: 'localhost', //'triton.towson.edu',
     user: 'root', //'rcarte14',
-    password: '12345', //'Cosc*77fe',
+    password: 'password', //'Cosc*77fe',
     database: 'Marriott', // 'rcarte14db',
 })
 
@@ -18,18 +19,9 @@ db.connect(err => {
     console.log('MySql Connected...')
 })
 
-// Test
-// app.get('/', (req, res) => res.json({ msg: 'Hello' }))
-
-// // Create Db <---- testing pt 2
-// app.get('/createdb', (req, res) => {
-//     let sql = 'CREATE DATABASE Marriott'
-//     db.query(sql, (err, result) => {
-//         if (err) throw err
-//         console.log(result)
-//         res.send('database created')
-//     })
-// })
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // _________________________Hotel______________________________________________
 // Create hotel
@@ -37,7 +29,6 @@ app.post('/addhotel', (req, res) => {
     let hotel = {
         hotelID: req.body.hotelID,
         hotelName: req.body.hotelName,
-        hotel_rating: req.body.hotel_rating,
         address: req.body.address,
         state: req.body.state,
         city: req.body.city,
@@ -61,19 +52,15 @@ app.get('/gethotel', (req, res) => {
 })
 
 // Update hotel
-app.patch('/updatehotel/:hotelID', (req, res) => {
-    let newHotel = 'Updated Hotel'
-
+app.patch('/updatehotel/:id', (req, res) => {
     let hotelUpdate = {
-        hotelID: req.body.hotelID,
         hotelName: req.body.hotelName,
-        hotel_rating: req.body.hotel_rating,
         address: req.body.address,
         state: req.body.state,
         city: req.body.city,
     }
 
-    let sql = `UPDATE Hotel SET ? WHERE hotelID = ?`
+    let sql = `UPDATE Hotel SET ? WHERE hotelName = ?`
     db.query(sql, [hotelUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
@@ -82,14 +69,13 @@ app.patch('/updatehotel/:hotelID', (req, res) => {
 })
 
 // Delete hotel
-app.get('/deletehotel/:hotelID', (req, res) => {
+app.get('/deletehotel/:id', (req, res) => {
     let sql = `DELETE FROM Hotel WHERE hotelID = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
         console.log(result)
         //console.log(result);
         res.status(200).json({ success: 'Hotel Deleted' })
-        //res.send('Reservation Deleted...');
     })
 })
 
@@ -120,15 +106,14 @@ app.get('/gethotelprice', (req, res) => {
 })
 
 // Update hotel price
-app.patch('/updatehotelprice/:hotelID', (req, res) => {
-    let newHotelPrice = 'Updated HotelPrice'
+app.patch('/updatehotelprice/:id', (req, res) => {
     let hotelPriceUpdate = {
         hotelName: req.body.hotelName,
         hotelID: req.body.hotelID,
         price: req.body.price,
     }
     let sql = `UPDATE HotelPrice SET ? WHERE HotelID = ?`
-    db.query(sql, [hotelPriceUpdate, req.body.hotelID], (err, result) => {
+    db.query(sql, [hotelPriceUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'HotelPrice updated' })
@@ -136,8 +121,8 @@ app.patch('/updatehotelprice/:hotelID', (req, res) => {
 })
 
 // Delete hotel price
-app.get('/deletehotelprice/:hotelID', (req, res) => {
-    let sql = `DELETE FROM HotelPrice WHERE hotelID = ?`
+app.get('/deletehotelprice/:id', (req, res) => {
+    let sql = `DELETE FROM HotelPrice WHERE hotelName = ?`
     let query = db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
         console.log(result)
@@ -148,14 +133,14 @@ app.get('/deletehotelprice/:hotelID', (req, res) => {
 
 // __________________________Rooms___________________________________________________
 // Create rooms
-app.post('/addroom', (req, res) => {
+app.post('/addrooms', (req, res) => {
     let room = {
         roomNumber: req.body.roomNumber,
-        hotelRoom: req.body.hotelRoom,
+        hotelName: req.body.hotelName,
         maxPersons: req.body.maxPersons,
         price: req.body.price,
     }
-    let sql = 'INSERT INTO Room SET ?'
+    let sql = 'INSERT INTO Rooms SET ?'
     db.query(sql, room, (err, result) => {
         if (err) throw err
         console.log(result)
@@ -165,7 +150,7 @@ app.post('/addroom', (req, res) => {
 
 // Read rooms
 app.get('/getrooms', (req, res) => {
-    let sql = 'SELECT * FROM Room'
+    let sql = 'SELECT * FROM Rooms'
     db.query(sql, (err, results) => {
         if (err) throw err
         console.log(results)
@@ -173,14 +158,15 @@ app.get('/getrooms', (req, res) => {
     })
 })
 // Update rooms
-app.patch('/updaterooms/:roomNumber', (req, res) => {
-    //let newRooms = 'Updated Rooms'
+app.patch('/updaterooms/:id', (req, res) => {
     let roomsUpdate = {
-        Equip_name: req.body.Equip_name,
-        Price: req.body.Price,
+        roomNumber: req.body.roomNumber,
+        hotelName: req.body.hotelName,
+        maxPersons: req.body.maxPersons,
+        price: req.body.price,
     }
     let sql = `UPDATE Rooms SET ? WHERE roomNumber = ?`
-    db.query(sql, [req.body, req.body.roomNumber], (err, result) => {
+    db.query(sql, [roomsUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'Rooms Updated' })
@@ -188,7 +174,7 @@ app.patch('/updaterooms/:roomNumber', (req, res) => {
 })
 
 // Delete rooms
-app.get('/deleteroom/:roomNumber', (req, res) => {
+app.get('/deleteroom/:id', (req, res) => {
     let sql = `DELETE FROM Rooms WHERE roomNumber = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -202,7 +188,6 @@ app.post('/addroomtype', (req, res) => {
     let roomType = {
         typeOfRoom: req.body.typeOfRoom,
         roomNumber: req.body.roomNumber,
-        price: req.body.price,
         vacancy: req.body.vacancy,
     }
     let sql = 'INSERT INTO RoomType SET ?'
@@ -224,25 +209,22 @@ app.get('/getroomtype', (req, res) => {
 })
 
 // Update room type
-// I kept :id, change to primary key (typeOfRoom) if not working
 app.patch('/updateroomtype/:id', (req, res) => {
-    let newRoomType = 'Updated RoomtType'
     let roomTypeUpdate = {
         typeOfRoom: req.body.typeOfRoom,
         roomNumber: req.body.roomNumber,
-        price: req.body.price,
         vacancy: req.body.vacancy,
     }
     let sql = `UPDATE RoomType SET ? WHERE typeOfRoom = ?`
-    db.query(sql, [req.body, req.body.typeOfRoom], (err, result) => {
+    db.query(sql, [roomTypeUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'RoomType Updated' })
     })
 })
 // Delete room type
-app.get('/deleteroomtype/:typeOfRoom', (req, res) => {
-    let sql = `DELETE FROM manager WHERE typeOfRoom = ?`
+app.get('/deleteroomtype/:id', (req, res) => {
+    let sql = `DELETE FROM RoomType WHERE typeOfRoom = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
         console.log(result)
@@ -275,21 +257,21 @@ app.get('/getfitnesscenter', (req, res) => {
     })
 })
 // Update fitness center
-app.patch('/updatefitnesscenter/:machineID', (req, res) => {
+app.patch('/updatefitnesscenter/:id', (req, res) => {
     let newFitnessCenter = {
         machineID: req.body.machineID,
         hotelID: req.body.hotelID,
         machineName: req.body.machineName,
     }
     let sql = `UPDATE FitnessCenter SET ? WHERE machineID = ?`
-    db.query(sql, [req.body, req.body.machineID], (err, result) => {
+    db.query(sql, [newFitnessCenter, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
-        res.send('FitnessCenter updated...')
+        res.status(200).json({ success: 'FitnessCenter updated' })
     })
 })
 // Delete fitness center
-app.get('/deletefitnesscenter/:machineID', (req, res) => {
+app.get('/deletefitnesscenter/:id', (req, res) => {
     let sql = `DELETE FROM FitnessCenter WHERE machineID = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -326,7 +308,6 @@ app.get('/getlocation', (req, res) => {
 
 // Update location
 app.patch('/updatelocation/:id', (req, res) => {
-    let newLocation = 'Updated Location'
     let locationUpdate = {
         hotelID: req.body.hotelID,
         state: req.body.state,
@@ -335,15 +316,14 @@ app.patch('/updatelocation/:id', (req, res) => {
     }
     let sql = `UPDATE Location SET ? WHERE hotelID = ?`
 
-    // ****try changing req.body to locationUpdate if not working****
-    db.query(sql, [req.body, req.body.hotelID], (err, result) => {
+    db.query(sql, [locationUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'Location Updated' })
     })
 })
 // Delete location
-app.get('/deletelocation/:address', (req, res) => {
+app.get('/deletelocation/:id', (req, res) => {
     let sql = `DELETE FROM Location WHERE address = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -376,15 +356,14 @@ app.get('/gethotelrating', (req, res) => {
     })
 })
 // Update hotel rating
-app.patch('/updatehotelrating/:hotelName', (req, res) => {
-    let newHotelRating = 'Updated HotelRating'
+app.patch('/updatehotelrating/:id', (req, res) => {
     let hotelRatingUpdate = {
         hotelName: req.body.hotelName,
         hotelID: req.body.hotelID,
         starRating: req.body.starRating,
     }
     let sql = `UPDATE HotelRating SET ? WHERE hotelName = ?`
-    db.query(sql, [req.body, req.body.hotelName], (err, result) => {
+    db.query(sql, [hotelRatingUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'HotelRating Updated' })
@@ -392,7 +371,7 @@ app.patch('/updatehotelrating/:hotelName', (req, res) => {
 })
 
 // Delete hotel rating
-app.get('/deletehotelrating/:hotelName', (req, res) => {
+app.get('/deletehotelrating/:id', (req, res) => {
     let sql = `DELETE FROM HotelRating WHERE hotelName = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -412,7 +391,7 @@ app.post('/addreservation', (req, res) => {
         dateOut: req.body.dateOut,
         madeBy: req.body.madeBy,
     }
-    let sql = 'INSERT INTO Reservations SET ?'
+    let sql = 'INSERT INTO Reservation SET ?'
     db.query(sql, reservation, (err, result) => {
         if (err) throw err
         console.log(result)
@@ -420,8 +399,8 @@ app.post('/addreservation', (req, res) => {
     })
 })
 // Read reservations
-app.get('/reservations', (req, res) => {
-    let sql = 'SELECT * FROM reservations'
+app.get('/getreservation', (req, res) => {
+    let sql = 'SELECT * FROM Reservation'
     db.query(sql, (err, results) => {
         if (err) throw err
         console.log(results)
@@ -429,8 +408,7 @@ app.get('/reservations', (req, res) => {
     })
 })
 // Update reservations
-app.patch('/reservations/:reservationID', (req, res) => {
-    let newReservation = 'Updated Customer'
+app.patch('/updatereservation/:id', (req, res) => {
     let reservationUpdate = {
         reservationID: req.body.reservationID,
         roomNumber: req.body.roomNumber,
@@ -439,15 +417,15 @@ app.patch('/reservations/:reservationID', (req, res) => {
         dateOut: req.body.dateOut,
         madeBy: req.body.madeBy,
     }
-    let sql = `UPDATE Reservations SET ? WHERE reservationID = ?`
-    db.query(sql, [req.body, req.body.reservationID], (err, result) => {
+    let sql = `UPDATE Reservation SET ? WHERE reservationID = ?`
+    db.query(sql, [reservationUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'Reservations Updated' })
     })
 })
 // Delete reservations
-app.get('/deletereservation/:reservatinID', (req, res) => {
+app.get('/deletereservation/:id', (req, res) => {
     let sql = `DELETE FROM Reservation WHERE reservationID = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -463,6 +441,8 @@ app.post('/addstayduration', (req, res) => {
         dayIn: req.body.dayIn,
         SSN: req.body.SSN,
         dayOut: req.body.dayOut,
+        timeIn: req.body.timeIn,
+        timeOut: req.body.timeOut,
     }
     let sql = 'INSERT INTO StayDuration SET ?'
     db.query(sql, stay, (err, result) => {
@@ -481,23 +461,21 @@ app.get('/getstayduration', (req, res) => {
     })
 })
 // Update stay duration
-app.patch('/updatestayduration/:dayIn', (req, res) => {
-    let newStayDuration = 'Updated StayDuration'
+app.patch('/updatestayduration/:id', (req, res) => {
     let stayDurationUpdate = {
         dayIn: req.body.dayIn,
         SSN: req.body.SSN,
         dayOut: req.body.dayOut,
     }
     let sql = `UPDATE StayDuration SET ? WHERE dayIn = ?`
-    db.query(sql, [req.body, req.body.dayIn], (err, result) => {
+    db.query(sql, [stayDurationUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
-        //res.send('Merchandise updated...');
-        res.status(200).json({ success: 'Merchandise Updated' })
+        res.status(200).json({ success: 'StayDuration Updated' })
     })
 })
 // Delete stay duration
-app.get('/deletestayduration/:dayIn', (req, res) => {
+app.get('/deletestayduration/:id', (req, res) => {
     let sql = `DELETE FROM StayDuration WHERE dayIn = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -538,8 +516,7 @@ app.get('/getcustomer', (req, res) => {
     })
 })
 // Update customer
-app.patch('/updatecustomer/:SSN', (req, res) => {
-    let newCustomer = 'Updated Customer'
+app.patch('/updatecustomer/:id', (req, res) => {
     let customerUpdate = {
         SSN: req.body.SSN,
         reservationID: req.body.reservationID,
@@ -553,15 +530,14 @@ app.patch('/updatecustomer/:SSN', (req, res) => {
         sex: req.body.sex,
     }
     let sql = `UPDATE Customer SET ? WHERE SSN = ?`
-    db.query(sql, [req.body, req.body.SSN], (err, result) => {
+    db.query(sql, [customerUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
-        //res.send('Customer Info updated...');
         res.status(200).json({ success: 'Customer Updated' })
     })
 })
 // Delete customer
-app.get('/deletecustomer/:SSN', (req, res) => {
+app.get('/deletecustomer/:id', (req, res) => {
     let sql = `DELETE FROM Customer WHERE SSN = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -594,21 +570,21 @@ app.get('/getroomchange', (req, res) => {
     })
 })
 // Update room change
-app.patch('/updateroomchange/:reservationID', (req, res) => {
+app.patch('/updateroomchange/:id', (req, res) => {
     let roomchangeUpdate = {
         reservationID: req.body.reservationID,
         SSN: req.body.SSN,
         roomNumber: req.body.roomNumber,
     }
-    let sql = `UPDATE Customer SET ? WHERE SSN = ?`
-    db.query(sql, [req.body, req.body.reservationID], (err, result) => {
+    let sql = `UPDATE Customer SET ? WHERE reservationID = ?`
+    db.query(sql, [roomchangeUpdate, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'RoomChange Updated' })
     })
 })
 // Delete room change
-app.get('/deleteroomchange/:reservationID', (req, res) => {
+app.get('/deleteroomchange/:id', (req, res) => {
     let sql = `DELETE FROM Customer WHERE reservationID = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -622,6 +598,7 @@ app.post('/addhotelemployee', (req, res) => {
     let employee = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
+        middleInitial: req.body.middleInitial,
         SSN: req.body.SSN,
         employeeID: req.body.employeeID,
         sex: req.body.sex,
@@ -643,7 +620,7 @@ app.get('/gethotelemployee', (req, res) => {
     })
 })
 // Update hotel employee
-app.patch('/updatehotelemployee/:employeeID', (req, res) => {
+app.patch('/updatehotelemployee/:id', (req, res) => {
     let employee = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -652,14 +629,14 @@ app.patch('/updatehotelemployee/:employeeID', (req, res) => {
         sex: req.body.sex,
     }
     let sql = `UPDATE HotelEmployee SET ? WHERE employeeID = ?`
-    db.query(sql, [req.body, req.body.employeeID], (err, result) => {
+    db.query(sql, [employee, req.body.employeeID], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'HotelEmployee Updated' })
     })
 })
 // Delete hotel employee
-app.get('/deletehotelemployee/:employeeID', (req, res) => {
+app.get('/deletehotelemployee/:id', (req, res) => {
     let sql = `DELETE FROM HotelEmployee WHERE employeeID = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -694,7 +671,7 @@ app.get('/getemployeeaccount', (req, res) => {
     })
 })
 // Update employee account
-app.patch('/updateemployeeaccount/:SSN', (req, res) => {
+app.patch('/updateemployeeaccount/:id', (req, res) => {
     let employee = {
         SSN: req.body.SSN,
         employeeID: req.body.employeeID,
@@ -710,7 +687,7 @@ app.patch('/updateemployeeaccount/:SSN', (req, res) => {
     })
 })
 // Delete employee account
-app.get('/deleteemployeeaccount/:SSN', (req, res) => {
+app.get('/deleteemployeeaccount/:id', (req, res) => {
     let sql = `DELETE FROM EmployeeAccount WHERE SSN = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -744,21 +721,21 @@ app.get('/getroomservice', (req, res) => {
     })
 })
 // Update room service
-app.patch('/updateroomservice/:menu', (req, res) => {
+app.patch('/updateroomservice/:id', (req, res) => {
     let roomservice = {
         menu: req.body.menu,
         roomNumber: req.body.roomNumber,
         price: req.body.price,
     }
-    let sql = `UPDATE EmployeeAccount SET ? WHERE SSN = ?`
-    db.query(sql, [req.body, req.body.menu], (err, result) => {
+    let sql = `UPDATE RoomService SET ? WHERE menu = ?`
+    db.query(sql, [roomservice, req.params.id], (err, result) => {
         if (err) throw err
         console.log(result)
         res.status(200).json({ success: 'RoomService Updated' })
     })
 })
 // Delete room service
-app.get('/deleteroomservice/:menu', (req, res) => {
+app.get('/deleteroomservice/:id', (req, res) => {
     let sql = `DELETE FROM RoomService WHERE menu = ?`
     db.query(sql, req.params.id, (err, result) => {
         if (err) throw err
@@ -767,6 +744,6 @@ app.get('/deleteroomservice/:menu', (req, res) => {
     })
 })
 // ________________________End of Queries________________________________________
-app.listen('3306', () => {
-    console.log('Server started on Port 3306')
+app.listen('4000', () => {
+    console.log('Server started on Port 4000')
 })

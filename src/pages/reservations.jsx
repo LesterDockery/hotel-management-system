@@ -1,47 +1,63 @@
 import React, { Component } from "react";
 
+// We will use this line to divide the tables
+const ColoredLine = ({ color }) => (
+	<hr
+		style={{
+			color: color,
+			backgroundColor: color,
+			height: 5
+		}}
+	/>
+);
+
 export default class BookOnline extends Component {
 	constructor(props) {
 		super(props);
 
+		/* 
+		   Duplicates are commented out to remove the warnings but 
+		   we left them there to mimic our database 
+		*/
+
 		this.state = {
 			// __________________ Hotel__________________
-			hotelID: "", // primary key
+			hotelID: 0, // primary key
 			hotelName: "",
 			hotelRating: "",
 			address: "",
 			state: "",
 			city: "",
 			// __________________Hotel Price__________________
-			hotelName: "", // primary key
-			hotelID: "", // foreign key
+			//hotelName: "", // primary key
+			//hotelID: "", // foreign key
 			price: "",
 			// __________________Rooms__________________
 			roomNumber: "", // primary key
-			hotelName: "", // foreign key
+			//hotelName: "", // foreign key
 			maxPersons: "",
-			price: "",
+			//price: "",
 			// __________________Room Type__________________
 			typeOfRoom: "", // primary key
-			roomNumber: "", // foreign key
-			price: "",
+			//roomNumber: "", // foreign key
+			//price: "",
 			vacancy: "",
 			// __________________Fitness Center__________________
 			machineID: "", // primary key
-			hotelID: "", // foreign key
+			//hotelID: "", // foreign key
 			machineName: "",
 			// __________________Location__________________
-			address: "", // primary key
-			hotelID: "", // foreign key
-			city: "",
-			state: "",
+			//address: "", // primary key
+			//hotelID: "", // foreign key
+			//city: "",
+			//state: "",
 			// __________________Hotel Rating__________________
-			hotelName: "", // primary key
-			hotelID: "", // foreign key
+			//hotelName: "", // primary key
+			//hotelID: "", // foreign key
 			starRating: "",
 			// __________________Reservations__________________
 			reservationID: "", // primary key
-			roomNumber: "", // foreign key
+			//roomNumber: "", // foreign key
 			currentStatus: "",
 			dateIn: "",
 			dateOut: "",
@@ -50,38 +66,40 @@ export default class BookOnline extends Component {
 			dayIn: "", // primary key
 			SSN: "", // foreign key
 			dayOut: "",
+			timeIn: "",
+			timeOut: "",
 			// __________________Customer__________________
-			SSN: "", // primary key
-			reservationID: "", // foreign key
+			//SSN: "", // primary key
+			//reservationID: "", // foreign key
 			firstName: "",
 			middleInitial: "",
 			lastName: "",
-			address: "",
+			//address: "",
 			phone: "",
-			city: "",
-			state: "",
+			//city: "",
+			//state: "",
 			sex: "",
 			// __________________Room Change__________________
-			reservationID: "", // primary key
-			SSN: "", // foreign key
-			roomNumber: "",
+			//reservationID: "", // primary key
+			//SSN: "", // foreign key
+			//roomNumber: "",
 			// __________________Hotel Employee__________________
 			employeeID: "", // primary key
-			firstName: "",
-			lastName: "",
-			middleInitial: "",
-			SSN: "",
-			sex: "",
+			//firstName: "",
+			//lastName: "",
+			//middleInitial: "",
+			//SSN: "",
+			//sex: "",
 			// __________________Employee Account__________________
-			SSN: "", // primary key
-			employeeID: "", // foreign key
+			//SSN: "", // primary key
+			//employeeID: "", // foreign key
 			username: "",
 			pword: "",
 			clearanceLevel: "",
 			// __________________Room Service__________________
-			menu: "", // primary key
-			roomNumber: "", // foreign key
-			price: ""
+			menu: "" // primary key
+			//roomNumber: "", // foreign key
+			//price: ""
 		};
 	}
 
@@ -95,6 +113,11 @@ export default class BookOnline extends Component {
 	// Create Hotel
 	handleCreateHotel = e => {
 		e.preventDefault();
+
+		this.setState({
+			hotelID: Math.floor(Math.random() * 1000)
+		});
+
 		let hotel = {
 			hotelID: this.state.hotelID,
 			hotelName: this.state.hotelName,
@@ -117,18 +140,31 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Hotel
+	handleReadHotel = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/gethotel", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Hotel
 	handleUpdateHotel = e => {
 		e.preventDefault();
 		const hotel = {
-			hotelID: this.state.hotelID,
 			hotelName: this.state.hotelName,
-			hotelRating: this.state.hotelRating,
 			address: this.state.address,
 			state: this.state.state,
 			city: this.state.city
 		};
-		fetch("http://localhost:4000/updatehotel/" + this.state.hotelID, {
+		fetch("http://localhost:4000/updatehotel/" + this.state.hotelName, {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json"
@@ -145,7 +181,7 @@ export default class BookOnline extends Component {
 	handleDeleteHotel = e => {
 		e.preventDefault();
 
-		fetch("http://localhost:4000/deletehotel/" + this.state.hotelId, {
+		fetch("http://localhost:4000/deletehotel/" + this.state.hotelID, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json"
@@ -181,13 +217,28 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Hotel Price
+	handleReadHotelPrice = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/gethotelprice", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Hotel Price
 	handleUpdateHotelPrice = e => {
 		e.preventDefault();
 		const price = {
 			hotelID: this.state.hotelID,
 			hotelName: this.state.hotelName,
-			hotelRating: this.state.hotelRating
+			price: this.state.price
 		};
 		fetch("http://localhost:4000/updatehotelprice/" + this.state.hotelID, {
 			method: "PATCH",
@@ -206,7 +257,7 @@ export default class BookOnline extends Component {
 	handleDeleteHotelPrice = e => {
 		e.preventDefault();
 
-		fetch("http://localhost:4000/deletehotelprice/" + this.state.hotelId, {
+		fetch("http://localhost:4000/deletehotelprice/" + this.state.hotelName, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json"
@@ -229,7 +280,7 @@ export default class BookOnline extends Component {
 			maxPersons: this.state.maxPersons,
 			price: this.state.price
 		};
-		fetch("http://localhost:4000/addroom", {
+		fetch("http://localhost:4000/addrooms", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
@@ -243,6 +294,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Rooms
+	handleReadRoom = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getrooms", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Rooms
 	handleUpdateRooms = e => {
 		e.preventDefault();
@@ -289,7 +355,6 @@ export default class BookOnline extends Component {
 		let type = {
 			typeOfRoom: this.state.typeOfRoom,
 			roomNumber: this.state.roomNumber,
-			price: this.state.price,
 			vacancy: this.state.vacancy
 		};
 		fetch("http://localhost:4000/addroomtype", {
@@ -306,13 +371,27 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Room Type
+	handleReadRoomType = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getroomtype", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Room Type
 	handleUpdateRoomType = e => {
 		e.preventDefault();
 		const room = {
 			typeOfRoom: this.state.typeOfRoom,
 			roomNumber: this.state.roomNumber,
-			price: this.state.price,
 			vacancy: this.state.vacancy
 		};
 		fetch("http://localhost:4000/updateroomtype/" + this.state.typeOfRoom, {
@@ -368,6 +447,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Fitness Center
+	handleReadFitnessCenter = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getfitnesscenter", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Fitness Center
 	handleUpdateFitnessCenter = e => {
 		e.preventDefault();
@@ -430,6 +524,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Location
+	handleReadLocation = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getlocation", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Location
 	handleUpdateLocation = e => {
 		e.preventDefault();
@@ -492,6 +601,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Hotel Rating
+	handleReadHotelRating = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/gethotelrating", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Hotel Rating
 	handleUpdateHotelRating = e => {
 		e.preventDefault();
@@ -556,6 +680,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Reservations
+	handleReadReservation = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getreservation", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Reservations
 	handleUpdateReservation = e => {
 		e.preventDefault();
@@ -626,6 +765,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Stay Duration
+	handleReadStayDuration = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getstayduration", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Stay Duration
 	handleUpdateStayDuration = e => {
 		e.preventDefault();
@@ -694,6 +848,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Customer
+	handleReadCustomer = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getcustomer", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Customer
 	handleUpdateCustomer = e => {
 		e.preventDefault();
@@ -762,6 +931,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Room Change
+	handleReadRoomChange = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getroomchange", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Room Change
 	handleUpdateRoomChange = e => {
 		e.preventDefault();
@@ -771,7 +955,7 @@ export default class BookOnline extends Component {
 			roomNumber: this.state.roomNumber
 		};
 		fetch(
-			"http://localhost:4000/updateroomnumber/" + this.state.reservationID,
+			"http://localhost:4000/updateroomchange/" + this.state.reservationID,
 			{
 				method: "PATCH",
 				headers: {
@@ -812,7 +996,7 @@ export default class BookOnline extends Component {
 		e.preventDefault();
 		let employee = {
 			employeeID: this.state.employeeID,
-			firstName: this.state.hotelID,
+			firstName: this.state.firstName,
 			middleInitial: this.state.middleInitial,
 			lastName: this.state.lastName,
 			SSN: this.state.SSN,
@@ -832,6 +1016,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Hotel Employee
+	handleReadHotelEmployee = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/gethotelemployee", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Hotel Employee
 	handleUpdateHotelEmployee = e => {
 		e.preventDefault();
@@ -904,6 +1103,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Employee Account
+	handleReadEmployeeAccount = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getemployeeaccount", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Employee Account
 	handleUpdateEmployeeAccount = e => {
 		e.preventDefault();
@@ -968,6 +1182,21 @@ export default class BookOnline extends Component {
 			.catch(err => console.log("ERROR: ", err));
 	};
 	// Read Room Service
+	handleReadRoomService = e => {
+		e.preventDefault();
+		fetch("http://localhost:4000/getroomservice", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: undefined
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("RESPONSE: ", data);
+			})
+			.catch(err => console.log("ERROR: ", err));
+	};
 	// Update Room Service
 	handleUpdateRoomService = e => {
 		e.preventDefault();
@@ -1011,12 +1240,12 @@ export default class BookOnline extends Component {
 	render() {
 		return (
 			<main>
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Hotel </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateHotel}>
 								<div className="form-group">
 									<input
@@ -1029,6 +1258,10 @@ export default class BookOnline extends Component {
 										onChange={this.handleChange}
 									/>
 								</div>
+								{/*
+								We removed this and now set the state of
+								hotelID as a random int for security
+								~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 								<div className="form-group">
 									<input
 										type="text"
@@ -1039,7 +1272,7 @@ export default class BookOnline extends Component {
 										required
 										onChange={this.handleChange}
 									/>
-								</div>
+								</div> */}
 								<div className="form-group">
 									<input
 										type="text"
@@ -1133,12 +1366,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Hotel </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateHotel}>
 								<div className="form-group">
 									<input
@@ -1151,7 +1384,7 @@ export default class BookOnline extends Component {
 										onChange={this.handleChange}
 									/>
 								</div>
-								<div className="form-group">
+								{/* <div className="form-group">
 									<input
 										type="text"
 										name="hotelID"
@@ -1161,7 +1394,7 @@ export default class BookOnline extends Component {
 										required
 										onChange={this.handleChange}
 									/>
-								</div>
+								</div> */}
 								<div className="form-group">
 									<input
 										type="text"
@@ -1249,18 +1482,17 @@ export default class BookOnline extends Component {
 								<button type="submit" className="btn button btn-lg">
 									Update Hotel
 								</button>
-								<h1>{/* This is where DONE will go */}</h1>
 							</form>
 						</div>
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Hotel </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteHotel}>
 								<div className="form-group">
 									<input
@@ -1282,12 +1514,35 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Hotels </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Hotels"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadHotel}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Hotel Price </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateHotelPrice}>
 								<div className="form-group">
 									<input
@@ -1332,12 +1587,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Hotel Price </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateHotelPrice}>
 								<div className="form-group">
 									<input
@@ -1381,12 +1636,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Hotel Price </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteHotelPrice}>
 								<div className="form-group">
 									<input
@@ -1406,13 +1661,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Hotel Prices </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Hotel Prices"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadHotelPrice}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Room </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateRoom}>
 								<div className="form-group">
 									<input
@@ -1468,12 +1745,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Room </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateRooms}>
 								<div className="form-group">
 									<input
@@ -1528,12 +1805,12 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Room </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteRoom}>
 								<div className="form-group">
 									<input
@@ -1553,13 +1830,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Rooms </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Rooms"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadRoom}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Room Type </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateRoomType}>
 								<div className="form-group">
 									<input
@@ -1586,17 +1885,6 @@ export default class BookOnline extends Component {
 								<div className="form-group">
 									<input
 										type="text"
-										name="price"
-										id="price"
-										placeholder="Price"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<div className="form-group">
-									<input
-										type="text"
 										name="vacancy"
 										id="vacancy"
 										placeholder="Vacancy"
@@ -1613,12 +1901,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Room Type</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateRoomType}>
 								<div className="form-group">
 									<input
@@ -1645,17 +1933,6 @@ export default class BookOnline extends Component {
 								<div className="form-group">
 									<input
 										type="text"
-										name="price"
-										id="price"
-										placeholder="Price"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<div className="form-group">
-									<input
-										type="text"
 										name="vacancy"
 										id="vacancy"
 										placeholder="Vacancy"
@@ -1672,12 +1949,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Room Type </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteRoomType}>
 								<div className="form-group">
 									<input
@@ -1697,13 +1974,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Room Types </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Room Types"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadRoomType}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Fitness Center </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateFitnessCenter}>
 								<div className="form-group">
 									<input
@@ -1746,13 +2045,13 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Fitness Center </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleCreateFitnessCenter}>
+						<div className="col-md-8">
+							<form onSubmit={this.handleUpdateFitnessCenter}>
 								<div className="form-group">
 									<input
 										type="text"
@@ -1794,12 +2093,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Fitness Center </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteFitnessCenter}>
 								<div className="form-group">
 									<input
@@ -1820,13 +2119,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Fitness Centers </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Fitness Centers"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadFitnessCenter}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Location </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateLocation}>
 								<div className="form-group">
 									<input
@@ -1844,7 +2165,7 @@ export default class BookOnline extends Component {
 										type="text"
 										name="hotelID"
 										id="hotelID"
-										placeholder="First Name"
+										placeholder="Hotel ID"
 										className="form-control input-lg"
 										required
 										onChange={this.handleChange}
@@ -1930,12 +2251,12 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Location </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateLocation}>
 								<div className="form-group">
 									<input
@@ -1953,7 +2274,7 @@ export default class BookOnline extends Component {
 										type="text"
 										name="hotelID"
 										id="hotelID"
-										placeholder="First Name"
+										placeholder="Hotel ID"
 										className="form-control input-lg"
 										required
 										onChange={this.handleChange}
@@ -2038,16 +2359,16 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Location </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteLocation}>
 								<div className="form-group">
 									<input
-										type="number"
+										type="text"
 										name="address"
 										id="address"
 										placeholder="Address"
@@ -2063,13 +2384,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Locations </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Locations"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadLocation}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Hotel Rating </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateHotelRating}>
 								<div className="form-group">
 									<input
@@ -2112,19 +2455,19 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Hotel Rating</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateHotelRating}>
 								<div className="form-group">
 									<input
-										type="number"
-										name="machineName"
-										id="machineName"
-										placeholder="Enter ID #"
+										type="text"
+										name="hotelName"
+										id="hotelName"
+										placeholder="Hotel Name"
 										maxLength="12"
 										className="form-control input-lg"
 										required
@@ -2134,9 +2477,9 @@ export default class BookOnline extends Component {
 								<div className="form-group">
 									<input
 										type="text"
-										name="address"
-										id="address"
-										placeholder="First Name"
+										name="hotelID"
+										id="hotelID"
+										placeholder="Hotel ID"
 										className="form-control input-lg"
 										required
 										onChange={this.handleChange}
@@ -2144,10 +2487,9 @@ export default class BookOnline extends Component {
 								</div>
 								<div className="form-group">
 									<input
-										type="password"
-										name="city"
-										id="city"
-										placeholder="Last Name"
+										name="starRating"
+										id="starRating"
+										placeholder="Star Rating"
 										className="form-control input-lg"
 										required
 										onChange={this.handleChange}
@@ -2161,16 +2503,16 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Hotel Rating</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteHotelRating}>
 								<div className="form-group">
 									<input
-										type="number"
+										type="text"
 										name="hotelName"
 										id="hotelName"
 										placeholder="Hotel Name"
@@ -2186,13 +2528,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Hotel Ratings </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Hotel Ratings"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadHotelRating}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Reservation </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateReservation}>
 								<div className="form-group">
 									<input
@@ -2267,13 +2631,13 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Reservation </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleCreateReservation}>
+						<div className="col-md-8">
+							<form onSubmit={this.handleUpdateReservation}>
 								<div className="form-group">
 									<input
 										type="text"
@@ -2341,22 +2705,22 @@ export default class BookOnline extends Component {
 									/>
 								</div>
 								<button type="submit" className="btn button btn-lg">
-									Create Reservation
+									Update Reservation
 								</button>
 							</form>
 						</div>
 					</div>
 				</section>
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Reservation </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteReservation}>
 								<div className="form-group">
 									<input
-										type="number"
+										type="text"
 										name="reservationID"
 										id="reservationID"
 										placeholder="Reservation ID"
@@ -2372,135 +2736,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
-						<h2>Create Stay Duration</h2>
+						<h2>Get Reservations </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleCreateStayDuration}>
+						<div className="col-md-8">
+							<form>
 								<div className="form-group">
 									<input
-										type="number"
-										name="dayIn"
-										id="dayIn"
-										placeholder="Day In"
-										maxLength="12"
-										className="form-control input-lg"
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Reservations"
+										className="btn button btn-lg"
 										required
-										onChange={this.handleChange}
+										onClick={this.handleReadReservation}
 									/>
 								</div>
-								<div className="form-group">
-									<input
-										type="text"
-										name="dayOut"
-										id="dayOut"
-										placeholder="Day Out"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<div className="form-group">
-									<input
-										type="text"
-										name="SSN"
-										id="SSN"
-										placeholder="SSN"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<button type="submit" className="btn button btn-lg">
-									Create Stay Duration
-								</button>
 							</form>
 						</div>
 					</div>
 				</section>
-				<section>
-					<div className="page-header">
-						<h2>Update Stay Duration</h2>
-					</div>
-					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleUpdateStayDuration}>
-								<div className="form-group">
-									<input
-										type="number"
-										name="dayIn"
-										id="dayIn"
-										placeholder="Day In"
-										maxLength="12"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<div className="form-group">
-									<input
-										type="text"
-										name="dayOut"
-										id="dayOut"
-										placeholder="Day Out"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<div className="form-group">
-									<input
-										type="text"
-										name="SSN"
-										id="SSN"
-										placeholder="SSN"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<button type="submit" className="btn button btn-lg">
-									Update Stay Duration
-								</button>
-							</form>
-						</div>
-					</div>
-				</section>
-				<section>
-					<div className="page-header">
-						<h2>Delete Stay Duration </h2>
-					</div>
-					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleDeleteStayDuratino}>
-								<div className="form-group">
-									<input
-										type="number"
-										name="dayIn"
-										id="dayIn"
-										placeholder="Day In"
-										className="form-control input-lg"
-										required
-										onChange={this.handleChange}
-									/>
-								</div>
-								<button type="submit" className="btn button btn-lg">
-									Delete Stay Duration
-								</button>
-							</form>
-						</div>
-					</div>
-				</section>
-
-				<section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Customer</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateCustomer}>
 								<div className="form-group">
 									<input
@@ -2571,7 +2835,7 @@ export default class BookOnline extends Component {
 								</div>
 								<div className="form-group">
 									<input
-										type="number"
+										type="text"
 										name="address"
 										id="address"
 										placeholder="Address"
@@ -2671,13 +2935,13 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
-				<div className="page-header">
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
 						<h2>Update Customer </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleCreateCustomer}>
+						<div className="col-md-8">
+							<form onSubmit={this.handleUpdateCustomer}>
 								<div className="form-group">
 									<input
 										type="text"
@@ -2747,7 +3011,7 @@ export default class BookOnline extends Component {
 								</div>
 								<div className="form-group">
 									<input
-										type="number"
+										type="text"
 										name="address"
 										id="address"
 										placeholder="Address"
@@ -2847,13 +3111,13 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Customer </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleDeleteRoomChange}>
+						<div className="col-md-8">
+							<form onSubmit={this.handleDeleteCustomer}>
 								<div className="form-group">
 									<input
 										type="text"
@@ -2866,19 +3130,229 @@ export default class BookOnline extends Component {
 									/>
 								</div>
 								<button type="submit" className="btn button btn-lg">
-									Delete Room Change
+									Delete Customer
 								</button>
 							</form>
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Customer </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Customers"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadCustomer}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Create Stay Duration</h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form onSubmit={this.handleCreateStayDuration}>
+								<div className="form-group">
+									<input
+										type="text"
+										name="dayIn"
+										id="dayIn"
+										placeholder="Day In"
+										maxLength="12"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="dayOut"
+										id="dayOut"
+										placeholder="Day Out"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="timeIn"
+										id="timeIn"
+										placeholder="Check-in Time"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="timeOut"
+										id="timeOut"
+										placeholder="Checkout Time"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="SSN"
+										id="SSN"
+										placeholder="SSN"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<button type="submit" className="btn button btn-lg">
+									Create Stay Duration
+								</button>
+							</form>
+						</div>
+					</div>
+				</section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Update Stay Duration</h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form onSubmit={this.handleUpdateStayDuration}>
+								<div className="form-group">
+									<input
+										type="text"
+										name="dayIn"
+										id="dayIn"
+										placeholder="Day In"
+										maxLength="12"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="dayOut"
+										id="dayOut"
+										placeholder="Day Out"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="timeIn"
+										id="timeIn"
+										placeholder="Check-in Time"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="timeOut"
+										id="timeOut"
+										placeholder="Checkout Time"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<div className="form-group">
+									<input
+										type="text"
+										name="SSN"
+										id="SSN"
+										placeholder="SSN"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<button type="submit" className="btn button btn-lg">
+									Update Stay Duration
+								</button>
+							</form>
+						</div>
+					</div>
+				</section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Delete Stay Duration </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form onSubmit={this.handleDeleteStayDuratino}>
+								<div className="form-group">
+									<input
+										type="text"
+										name="dayIn"
+										id="dayIn"
+										placeholder="Day In"
+										className="form-control input-lg"
+										required
+										onChange={this.handleChange}
+									/>
+								</div>
+								<button type="submit" className="btn button btn-lg">
+									Delete Stay Duration
+								</button>
+							</form>
+						</div>
+					</div>
+				</section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Stay Durations </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Stay Durations"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadStayDuration}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Room Change</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateRoomChange}>
 								<div className="form-group">
 									<input
@@ -2921,13 +3395,13 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Room Change</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleCreateRoomChange}>
+						<div className="col-md-8">
+							<form onSubmit={this.handleUpdateRoomChange}>
 								<div className="form-group">
 									<input
 										type="text"
@@ -2962,19 +3436,19 @@ export default class BookOnline extends Component {
 									/>
 								</div>
 								<button type="submit" className="btn button btn-lg">
-									Create Room Change
+									Update Room Change
 								</button>
 							</form>
 						</div>
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Room Change </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteRoomChange}>
 								<div className="form-group">
 									<input
@@ -2994,13 +3468,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Room Changes </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Room Changes"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadRoomChange}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Hotel Employee </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateHotelEmployee}>
 								<div className="form-group">
 									<input
@@ -3077,12 +3573,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Hotel Employee </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateHotelEmployee}>
 								<div className="form-group">
 									<input
@@ -3159,12 +3655,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Hotel Employee </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteHotelEmployee}>
 								<div className="form-group">
 									<input
@@ -3184,13 +3680,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Hotel Employees </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Employees"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadHotelEmployee}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Employee Account </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateEmployeeAccount}>
 								<div className="form-group">
 									<input
@@ -3255,12 +3773,12 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Employee Account</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleUpdateEmployeeAccount}>
 								<div className="form-group">
 									<input
@@ -3318,19 +3836,19 @@ export default class BookOnline extends Component {
 									/>
 								</div>
 								<button type="submit" className="btn button btn-lg">
-									Update Hotel Employee
+									Update Employee Account
 								</button>
 							</form>
 						</div>
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Employee Account </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteHotelEmployee}>
 								<div className="form-group">
 									<input
@@ -3350,13 +3868,35 @@ export default class BookOnline extends Component {
 						</div>
 					</div>
 				</section>
-
-				<section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Employee Accounts </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Employee Accounts"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadEmployeeAccount}
+									/>
+								</div>
+							</form>
+						</div>
+					</div>
+				</section>
+				<ColoredLine color="red" />
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Create Room Service</h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleCreateRoomService}>
 								<div className="form-group">
 									<input
@@ -3399,13 +3939,13 @@ export default class BookOnline extends Component {
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Update Room Service </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
-							<form onSubmit={this.handleCreateRoomService}>
+						<div className="col-md-8">
+							<form onSubmit={this.handleUpdateRoomService}>
 								<div className="form-group">
 									<input
 										type="text"
@@ -3440,19 +3980,19 @@ export default class BookOnline extends Component {
 									/>
 								</div>
 								<button type="submit" className="btn button btn-lg">
-									Create Room Service
+									Update Room Service
 								</button>
 							</form>
 						</div>
 					</div>
 				</section>
 
-				<section>
+				<section style={{ width: "50%" }}>
 					<div className="page-header">
 						<h2>Delete Room Service </h2>
 					</div>
 					<div className="row">
-						<div className="col-md-6">
+						<div className="col-md-8">
 							<form onSubmit={this.handleDeleteRoomService}>
 								<div className="form-group">
 									<input
@@ -3468,7 +4008,28 @@ export default class BookOnline extends Component {
 								<button type="submit" className="btn button btn-lg">
 									Delete Room Service
 								</button>
-								<h1>{this.state.responseResultDeleted}</h1>
+							</form>
+						</div>
+					</div>
+				</section>
+				<section style={{ width: "50%" }}>
+					<div className="page-header">
+						<h2>Get Room Services </h2>
+					</div>
+					<div className="row">
+						<div className="col-md-8">
+							<form>
+								<div className="form-group">
+									<input
+										type="button"
+										name="hotelID"
+										id="hotelID"
+										value="Get Room Services"
+										className="btn button btn-lg"
+										required
+										onClick={this.handleReadRoomService}
+									/>
+								</div>
 							</form>
 						</div>
 					</div>
